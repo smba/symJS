@@ -2,6 +2,9 @@ package symbolic_js.core
 
 import scala.collection.mutable.HashMap
 
+import symbolic_js.core.values.JSValue
+import symbolic_js.core.values.JSNullValue
+
 class JSEnv(val parent: Option[JSEnv]) {
 
   private val variables = HashMap[String, JSValue]()
@@ -13,10 +16,10 @@ class JSEnv(val parent: Option[JSEnv]) {
   def lookup(identifier: String): JSValue = {
     val value = variables.get(identifier)
     if (!value.isEmpty) {
-      return value.get
+      value.get
     } else {
       if (parent.isEmpty) {
-        return JSNullValue
+        JSNullValue
       } else {
         parent.get.lookup(identifier)
       }

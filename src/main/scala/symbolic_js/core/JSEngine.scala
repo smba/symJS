@@ -4,14 +4,15 @@ import java.io.File
 
 import scala.collection.JavaConversions.asScalaBuffer
 
+import jdk.nashorn.internal.ir.Assignment
+import jdk.nashorn.internal.ir.ExpressionStatement
+import jdk.nashorn.internal.ir.IfNode
 import jdk.nashorn.internal.ir.Statement
 import jdk.nashorn.internal.parser.Parser
 import jdk.nashorn.internal.runtime.Context
 import jdk.nashorn.internal.runtime.ErrorManager
 import jdk.nashorn.internal.runtime.Source
 import jdk.nashorn.internal.runtime.options.Options
-import jdk.nashorn.internal.ir.IfNode
-import jdk.nashorn.internal.ir.ExpressionStatement
 
 object JSEngine {
 
@@ -48,7 +49,15 @@ object JSEngine {
         println(statement.getTest)
       }
       case statement:ExpressionStatement => {
-        println(statement.getExpression)
+        val expression = statement.getExpression()
+        expression match {
+          case expression:Assignment[_] => {
+            val identifier_raw = expression.getAssignmentDest.toString
+            val identifier = identifier_raw.slice(identifier_raw.indexOf('$'), identifier_raw.size)
+            println(identifier)
+            println(expression.getAssignmentSource.getType)
+          }
+        }
       }
     }
   }
